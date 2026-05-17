@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio – Mining Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--coal:#0e0e0e;--slate:#1a1a1a;--rock:#2a2520;--amber:#c9922a;--gold:#e8b84b;--sand:#d4c5a9;--ash:#8a8078;--light:#f2ede6;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--coal);color:var(--sand);font-family:'Lora',serif;overflow-x:hidden;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--coal)}::-webkit-scrollbar-thumb{background:var(--amber)}
+body.edit-mode [data-editable]:hover{outline:2px dashed var(--amber);outline-offset:3px;cursor:text;background:rgba(201,146,42,0.05);border-radius:2px;}
+body.edit-mode [data-editable]:focus{outline:2px solid var(--gold);outline-offset:3px;background:rgba(201,146,42,0.08);border-radius:2px;}
+body.edit-mode .add-btn{display:flex!important;}
+body.edit-mode .del-btn{display:flex!important;}
+body.edit-mode .photo-overlay{display:flex!important;}
+body.edit-mode .tag-add{display:inline-block!important;}
+.add-btn,.del-btn{display:none!important;}
+.tag-add{display:none!important;}
+#toolbar{position:fixed;top:0;left:0;right:0;z-index:9999;background:#111;border-bottom:2px solid var(--amber);padding:0.55rem 1.5rem;display:flex;align-items:center;gap:0.75rem;font-family:'DM Mono',monospace;flex-wrap:wrap;}
+#tb-logo{font-size:0.68rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase;margin-right:auto;}
+.tb-btn{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.4rem 1rem;border:1px solid #333;background:transparent;color:var(--sand);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.tb-btn:hover{border-color:var(--amber);color:var(--amber);}
+.tb-btn.active{background:var(--amber);color:var(--coal);border-color:var(--amber);}
+.tb-btn.red{border-color:#6b0000;color:#ff7070;}
+.tb-btn.red:hover{background:#6b0000;color:#fff;}
+.tb-sep{width:1px;height:22px;background:#333;flex-shrink:0;}
+#edit-hint{font-size:0.58rem;color:var(--ash);letter-spacing:0.1em;display:none;}
+body.edit-mode #edit-hint{display:block;}
+nav{position:fixed;top:46px;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 4rem;background:linear-gradient(to bottom,rgba(14,14,14,0.95),transparent);backdrop-filter:blur(2px);}
+.nav-logo{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--amber);letter-spacing:0.3em;text-transform:uppercase;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--ash);text-decoration:none;letter-spacing:0.2em;text-transform:uppercase;transition:color 0.3s;}
+.nav-links a:hover{color:var(--gold);}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;padding-top:92px;}
+.hero-left{display:flex;flex-direction:column;justify-content:center;padding:4rem;}
+.hero-tag{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--amber);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:2rem;}
+.hero-name{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,5vw,5rem);font-weight:900;line-height:1.0;color:var(--light);margin-bottom:1.5rem;}
+.name-italic{color:var(--amber);display:block;font-style:italic;}
+.hero-title{font-family:'Lora',serif;font-size:1rem;color:var(--ash);line-height:1.8;max-width:380px;margin-bottom:3rem;}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-p{font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;padding:0.9rem 2rem;background:var(--amber);color:var(--coal);border:none;text-decoration:none;display:inline-block;transition:all 0.3s;font-weight:500;cursor:pointer;}
+.btn-p:hover{background:var(--gold);transform:translateY(-2px);}
+.btn-o{font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;padding:0.9rem 2rem;background:transparent;color:var(--sand);border:1px solid var(--ash);text-decoration:none;display:inline-block;transition:all 0.3s;cursor:pointer;}
+.btn-o:hover{border-color:var(--amber);color:var(--amber);transform:translateY(-2px);}
+.hero-right{position:relative;display:flex;align-items:center;justify-content:center;}
+.photo-frame{position:relative;width:300px;height:380px;}
+.photo-box{width:100%;height:100%;background:var(--rock);border:1px solid #3a3530;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;position:relative;overflow:hidden;}
+.photo-box img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none;}
+.photo-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.6);flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;z-index:10;}
+.photo-overlay:hover{background:rgba(0,0,0,0.5);}
+.p-icon{width:56px;height:56px;border:2px solid var(--amber);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--amber);font-size:1.3rem;}
+.p-hint{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--ash);letter-spacing:0.2em;text-transform:uppercase;text-align:center;}
+.fc{position:absolute;width:20px;height:20px;border-color:var(--amber);border-style:solid;}
+.fc.tl{top:-6px;left:-6px;border-width:2px 0 0 2px;}.fc.tr{top:-6px;right:-6px;border-width:2px 2px 0 0;}
+.fc.bl{bottom:-6px;left:-6px;border-width:0 0 2px 2px;}.fc.br{bottom:-6px;right:-6px;border-width:0 2px 2px 0;}
+.hero-bg{position:absolute;bottom:2rem;right:-2rem;font-family:'Playfair Display',serif;font-size:10rem;font-weight:900;color:rgba(201,146,42,0.04);line-height:1;pointer-events:none;white-space:nowrap;}
+.hero-line{position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(to right,transparent,var(--amber),transparent);opacity:0.3;}
+section{padding:6rem 4rem;position:relative;}
+.sec-lbl{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.5em;text-transform:uppercase;color:var(--amber);margin-bottom:0.5rem;}
+.sec-ttl{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;color:var(--light);margin-bottom:3rem;position:relative;}
+.sec-ttl::after{content:'';display:block;width:60px;height:2px;background:var(--amber);margin-top:1rem;}
+#about-text p{color:var(--sand);line-height:1.9;font-size:1rem;margin-bottom:1.5rem;}
+.exp-bg{background:var(--slate);}
+.exp-tl{position:relative;padding-left:2rem;}
+.exp-tl::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--amber),transparent);}
+.exp-item{position:relative;margin-bottom:3rem;padding-left:2.5rem;}
+.exp-item::before{content:'';position:absolute;left:-2rem;top:0.4rem;width:10px;height:10px;background:var(--amber);border-radius:50%;box-shadow:0 0 0 4px var(--slate),0 0 0 5px var(--amber);}
+.exp-date{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase;margin-bottom:0.5rem;}
+.exp-role{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--light);margin-bottom:0.3rem;}
+.exp-org{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--ash);margin-bottom:1rem;letter-spacing:0.1em;}
+.exp-desc{color:var(--sand);font-size:0.9rem;line-height:1.8;}
+.tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;}
+.tag{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.8rem;border:1px solid #3a3530;color:var(--ash);background:rgba(201,146,42,0.05);}
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;}
+.proj-card{background:var(--slate);border:1px solid #2a2520;padding:2rem;position:relative;overflow:hidden;transition:all 0.4s;}
+.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--amber),transparent);}
+.proj-card:hover{border-color:var(--amber);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.4);}
+.proj-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:rgba(201,146,42,0.08);position:absolute;top:-0.5rem;right:1rem;line-height:1;pointer-events:none;}
+.proj-type{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--amber);margin-bottom:0.8rem;}
+.proj-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--light);line-height:1.4;margin-bottom:1rem;}
+.proj-desc{font-size:0.85rem;color:var(--ash);line-height:1.7;margin-bottom:1.5rem;}
+.skills-bg{background:var(--rock);}
+.grp-ttl{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--amber);margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid #3a3530;}
+.ss-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-top:0.5rem;}
+.ss-item{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ash);padding:0.6rem 0.8rem;border:1px solid #2a2520;background:var(--slate);display:flex;align-items:center;gap:0.5rem;position:relative;}
+.ss-item::before{content:'◆';color:var(--amber);font-size:0.4rem;flex-shrink:0;}
+.comm-card{background:var(--slate);border:1px solid #2a2520;border-left:3px solid #3a3530;padding:1.25rem 1.5rem;display:grid;grid-template-columns:1fr auto;align-items:center;gap:1rem;transition:all 0.3s;position:relative;margin-bottom:1rem;}
+.comm-card:hover{border-left-color:var(--amber);transform:translateX(4px);}
+.comm-name{font-family:'Lora',serif;font-size:0.95rem;color:var(--light);margin-bottom:0.25rem;}
+.comm-role{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--ash);letter-spacing:0.1em;}
+.comm-year{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--amber);font-weight:700;text-align:right;}
+
+/* ================= GALLERY & LIGHTBOX CSS ================= */
+.gal-grid{display:grid;gap:1.5rem;}
+.gal-item{position:relative;border-radius:4px;overflow:hidden;aspect-ratio:4/3;background:#151210;border:1px solid #2a2520;cursor:pointer;}
+.gal-item img.gal-cover{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;opacity:0.8;}
+.gal-images { display:none; } /* Menyembunyikan daftar gambar tambahan */
+.gal-long-desc { display:none; } /* Deskripsi panjang hanya muncul di lightbox atau saat edit mode */
+body.edit-mode .gal-long-desc { display:block; margin-top:0.75rem; font-family:'Lora',serif; font-size:0.75rem; color:var(--ash); border-top:1px dashed #333; padding-top:0.5rem; }
+.gal-item:hover img.gal-cover{transform:scale(1.05);opacity:1;}
+.gal-info{position:absolute;bottom:0;left:0;right:0;padding:2rem 1.5rem 1.5rem;background:linear-gradient(to top, rgba(14,14,14,0.95), transparent);pointer-events:none;transition:opacity 0.3s;}
+.gal-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--light);margin-bottom:0.2rem;}
+.gal-desc{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;}
+.gal-extra-btn{display:none; position:absolute; bottom:0.4rem; right:0.4rem; background:var(--amber); color:#000; border:none; font-size:0.6rem; font-family:'DM Mono',monospace; padding:0.3rem 0.6rem; cursor:pointer; z-index:20; border-radius:2px;}
+.gal-extra-btn:hover{background:var(--gold);}
+body.edit-mode .gal-item img.gal-cover{opacity:0.3;}
+body.edit-mode .gal-info{pointer-events:auto; z-index: 20;}
+body.edit-mode .gal-extra-btn{display:block;}
+
+/* LIGHTBOX MODAL */
+#lb-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:999999; align-items:center; justify-content:center; padding:2rem; backdrop-filter:blur(5px); }
+#lb-overlay.open { display:flex; }
+#lb-box { display:flex; background:var(--slate); max-width:1100px; width:100%; max-height:85vh; border:1px solid var(--amber); border-radius:8px; overflow:hidden; position:relative; box-shadow:0 25px 50px -12px rgba(0,0,0,0.8); }
+#lb-left { flex:1 1 55%; position:relative; background:#050505; display:flex; align-items:center; justify-content:center; min-height:300px; overflow:hidden;}
+#lb-img { max-width:100%; max-height:100%; object-fit:contain; transition:opacity 0.3s; }
+#lb-right { flex:1 1 45%; padding:3rem 2.5rem; overflow-y:auto; display:flex; flex-direction:column; background:var(--slate);}
+.lb-close { position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--ash); font-size:2rem; cursor:pointer; z-index:10; transition:color 0.2s;}
+.lb-close:hover { color:var(--amber); }
+.lb-title { font-family:'Playfair Display',serif; font-size:2rem; color:var(--light); margin-bottom:0.5rem; line-height:1.2; padding-right:2rem;}
+.lb-subtitle { font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--amber); margin-bottom:2rem; letter-spacing:0.15em; text-transform:uppercase; border-bottom:1px solid #333; padding-bottom:1rem;}
+.lb-desc { font-family:'Lora',serif; color:var(--sand); font-size:1rem; line-height:1.9; }
+.lb-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.6); color:white; border:1px solid var(--amber); font-size:1.5rem; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; transition:all 0.2s; }
+.lb-nav:hover { background:var(--amber); color:#000; transform:translateY(-50%) scale(1.1); }
+#lb-prev { left:1rem; }
+#lb-next { right:1rem; }
+.lb-counter { position:absolute; bottom:1rem; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.6); color:var(--amber); font-family:'DM Mono',monospace; font-size:0.7rem; padding:0.3rem 0.8rem; border-radius:20px; letter-spacing:0.1em;}
+/* =============================================== */
+
+.contact-bg{background:var(--slate);}
+.contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+.contact-items{display:grid;gap:1rem;}
+.contact-item{display:flex;align-items:center;gap:1rem;padding:1rem 1.5rem;background:var(--rock);border:1px solid #2a2520;transition:all 0.3s;position:relative;}
+.contact-item:hover{border-color:var(--amber);transform:translateX(4px);}
+.ci-lbl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:0.2rem;}
+.ci-val{font-family:'Lora',serif;color:var(--light);font-size:0.9rem;}
+.ci-icon{font-size:1.2rem;color:var(--amber);flex-shrink:0;}
+footer{padding:2rem 4rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #1a1a1a;}
+footer p{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--ash);letter-spacing:0.2em;}
+footer span{color:var(--amber);}
+.add-btn{display:none;align-items:center;justify-content:center;gap:0.5rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);border:1px dashed var(--amber);background:rgba(201,146,42,0.05);padding:0.7rem 1.5rem;cursor:pointer;margin-top:1rem;width:100%;transition:all 0.2s;}
+.add-btn:hover{background:rgba(201,146,42,0.12);}
+.del-btn{display:none;position:absolute;top:0.4rem;right:0.4rem;background:#7b0000;color:#fff;border:none;font-size:0.6rem;font-family:'DM Mono',monospace;padding:0.2rem 0.55rem;cursor:pointer;z-index:20;border-radius:2px;align-items:center;}
+.del-btn:hover{background:#cc0000;}
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;}
+#modal-overlay.open{display:flex;}
+#modal-box{background:#1a1a1a;border:1px solid var(--amber);padding:2rem;width:min(480px,90vw);max-height:80vh;overflow-y:auto;position:relative;}
+#modal-box h3{font-family:'Playfair Display',serif;color:var(--light);margin-bottom:1.5rem;font-size:1.1rem;}
+.mf{margin-bottom:1rem;}
+.mf label{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;display:block;margin-bottom:0.4rem;}
+.mf input,.mf textarea{width:100%;background:#111;border:1px solid #3a3530;color:var(--sand);font-family:'Lora',serif;font-size:0.9rem;padding:0.6rem 0.8rem;outline:none;transition:border-color 0.2s;}
+.mf input:focus,.mf textarea:focus{border-color:var(--amber);}
+.mf textarea{min-height:80px;resize:vertical;}
+.modal-btns{display:flex;gap:0.75rem;margin-top:1.5rem;}
+.modal-x{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--ash);font-size:1.2rem;cursor:pointer;}
+.modal-x:hover{color:var(--amber);}
+/* ======== VISUAL ACCENTS ======== */
+/* Dot grid background for #about */
+#about {
+  background-image: radial-gradient(circle, rgba(201,146,42,0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+/* Subtle corner glow for project cards */
+.proj-card::after {
+  content:'';
+  position:absolute;
+  bottom:0; right:0;
+  width:80px; height:80px;
+  background: radial-gradient(circle at bottom right, rgba(201,146,42,0.08), transparent 70%);
+  pointer-events:none;
+}
+/* Diagonal stripe accent for skills section */
+#skills {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 24px,
+    rgba(201,146,42,0.03) 24px,
+    rgba(201,146,42,0.03) 25px
+  );
+}
+/* Section watermark numbers */
+section { overflow: hidden; }
+.sec-watermark {
+  position:absolute;
+  right: -1rem; top: 50%;
+  transform: translateY(-50%);
+  font-family:'Playfair Display',serif;
+  font-size: 12rem;
+  font-weight: 900;
+  color: rgba(201,146,42,0.035);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.05em;
+}
+/* Left amber glow accent bar on all black-background sections */
+#about::before,
+#projects::before,
+#gallery::before,
+#organization::before {
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:3px;
+  background: linear-gradient(to bottom, transparent, var(--amber), transparent);
+  opacity:0.5;
+}
+/* Glow highlight on organization section */
+#organization {
+  background-image: radial-gradient(ellipse at 80% 50%, rgba(201,146,42,0.05) 0%, transparent 60%);
+}
+/* Activity category badge */
+.act-badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.55rem;
+  border-radius: 2px;
+  margin-bottom: 0.35rem;
+}
+.act-badge.akademik {
+  background: rgba(201,146,42,0.12);
+  color: var(--amber);
+  border: 1px solid rgba(201,146,42,0.3);
+}
+.act-badge.non-akademik {
+  background: rgba(100,150,200,0.1);
+  color: #7aadcc;
+  border: 1px solid rgba(100,150,200,0.25);
+}
+/* Shadow lift on hover for about text area */
+#about-text p:hover {
+  text-shadow: 0 0 30px rgba(201,146,42,0.1);
+  transition: text-shadow 0.3s;
+}
+/* Gallery placeholder glow */
+.gal-item::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at center, rgba(201,146,42,0.04), transparent 70%);
+  pointer-events:none;
+}
+/* ================================= */
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;top:46px;}.nav-links{display:none;}
+  .hero{grid-template-columns:1fr;}.hero-left{padding:3rem 1.5rem;}.hero-right{display:none;}
+  section{padding:4rem 1.5rem;}
+  .contact-inner{grid-template-columns:1fr;gap:2rem;}
+  .ss-grid{grid-template-columns:1fr 1fr;}
+  footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem;}
+  #toolbar{gap:0.4rem;padding:0.5rem 1rem;overflow-x:auto;}
+  #lb-box{flex-direction:column; max-height:95vh; margin:1rem;}
+  #lb-left, #lb-right { flex:none; width:100%; }
+  #lb-left { min-height: 250px; }
+  #lb-right { padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <span id="tb-logo">◆ Portfolio Editor</span>
+  <span id="edit-hint">Klik teks untuk edit · Enter untuk selesai</span>
+  <button class="tb-btn" id="btn-edit">✏ Mode Edit</button>
+  <span class="tb-sep"></span>
+  <button class="tb-btn" id="btn-save">💾 Simpan</button>
+  <button class="tb-btn" id="btn-load">📂 Muat</button>
+  <span class="tb-sep"></span>
+  <button class="tb-btn" id="btn-export">⬇ Export HTML</button>
+  <button class="tb-btn red" id="btn-reset">↺ Reset</button>
+</div>
+
+<nav>
+  <div class="nav-logo" data-editable>◆ Mining Engineer</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#organization">Activities</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-left">
+    <p class="hero-tag" data-editable>◆ Fresh Graduate · Mining Engineering</p>
+    <h1 class="hero-name">
+      <span data-editable></span><br>
+      <span class="name-italic" data-editable>Anggit</span>
+      <span data-editable> Sumaryanto</span>
+    </h1>
+    <p class="hero-title" data-editable>A highly motivated Mining Engineering graduate with interest in geomechanics, hydrology, and mine planning. Experienced in rock mechanics testing and site operations. Adaptable, collaborative, lifelong learner, and driven by technical innovation</p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn-p" data-editable>View Projects</a>
+      <a href="#contact" class="btn-o" data-editable>Contact me</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="photo-frame">
+      <div class="photo-box" id="photo-area">
+        <img id="profile-photo" src="" alt="">
+        <div class="p-icon" id="p-icon">👤</div>
+        <p class="p-hint" id="p-hint">Foto Profesional<br>Anda Di Sini</p>
+        <div class="photo-overlay">📷 Ganti Foto</div>
+      </div>
+      <div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+    </div>
+    <div class="hero-bg">MINE</div>
+  </div>
+  <div class="hero-line"></div>
+</section>
+
+<input type="file" id="photo-input" accept="image/*" style="display:none">
+
+<section id="about">
+  <div class="sec-watermark">01</div>
+  <p class="sec-lbl" data-editable>01 · About me</p>
+  <h2 class="sec-ttl" data-editable>Introduction</h2>
+  <div id="about-text" style="max-width:720px">
+    <p data-editable>Fresh Graduated Mining Engineering degree from UPN 'Veteran' Yogyakarta, with a interest in Geomechanics, Hydrology, Hydrogeology, and Mine Planning.</p>
+    <p data-editable>Experienced in geotechnical analysis through roles as a Rock Mechanics Laboratory Assistant, also had a final project internship at PT Putra Perkasa Abadi (Jobsite PT Bukit Asam Tbk).</p>
+    <p data-editable>Highly adaptable to diverse working environments with collaborative skills across multidisciplinary teams. Driven by innovation and deeply committed to lifelong learning.</p>
+    <button class="add-btn" id="btn-add-para">+ Tambah Paragraf</button>
+  </div>
+</section>
+
+<section id="experience" class="exp-bg">
+  <div class="sec-watermark">02</div>
+  <p class="sec-lbl" data-editable>02 · Experiences</p>
+  <h2 class="sec-ttl" data-editable>Working Experience</h2>
+  <div class="exp-tl" id="exp-list">
+    <div class="exp-item">
+      <button class="del-btn">✕</button>
+      <div class="exp-date" data-editable>2023 – 2025</div>
+      <h3 class="exp-role" data-editable>Laboratory Assistant</h3>
+      <p class="exp-org" data-editable>Rock Mechanics Laboratory · UPN "Veteran" Yogyakarta</p>
+      <p class="exp-desc" data-editable>Instructed 70+ students across 45 sessions in standardized rock testing and evaluated 100+ reports per semester, while concurrently serving as equipment coordinator to maintain >95% operational readiness for laboratory assets and executing 10+ academic and industrial rock testing projects.</p>
+      <div class="tags"><span class="tag" data-editable>Physical test</span><span class="tag" data-editable>mechanical Test</span><span class="tag" data-editable>geomechanics analysis</span><button class="tag-add">+ Tag</button></div>
+    </div>
+    <div class="exp-item">
+      <button class="del-btn">✕</button>
+      <div class="exp-date" data-editable>2025</div>
+      <h3 class="exp-role" data-editable>Final Project Internship</h3>
+      <p class="exp-org" data-editable>Thesis Project · PT Putra Perkasa Abadi Jobsite PT Bukit Asam Tbk.</p>
+      <p class="exp-desc" data-editable>Conducted research on sump water overflow and designed an optimized sump based on USLE calculated erosion and sedimentation rates, resulting in a system capable of operating for 11 months without overflow.</p>
+      <div class="tags"><span class="tag" data-editable>water management</span><span class="tag" data-editable>hydrology analysis</span><span class="tag" data-editable>erosion &amp; sedimentation</span><button class="tag-add">+ Tag</button></div>
+    </div>
+    <div class="exp-item">
+      <button class="del-btn">✕</button>
+      <div class="exp-date" data-editable>2026</div>
+      <h3 class="exp-role" data-editable>Operation & Finance Support</h3>
+      <p class="exp-org" data-editable>Freelance · PT Niscala Jaya Abadi (Adhi Karya Subcontrator).</p>
+      <p class="exp-desc" data-editable>Managed 100 % alignment between order specifications and site delivery. Develop comprehensive profit & loss (P&L) reports to monitor business profitability.</p>
+      <div class="tags"><span class="tag" data-editable>project management</span><span class="tag" data-editable>cost control</span><span class="tag" data-editable>excel &amp; sedimentation</span><button class="tag-add">+ Tag</button></div>
+    </div>
+  </div>
+  <button class="add-btn" id="btn-add-exp">+ Tambah Pengalaman</button>
+</section>
+
+<section id="projects">
+  <div class="sec-watermark">03</div>
+  <p class="sec-lbl" data-editable>03 · Projects</p>
+  <h2 class="sec-ttl" data-editable>Academic Projects</h2>
+  <div class="proj-grid" id="proj-grid">
+    <div class="proj-card">
+      <button class="del-btn">✕</button>
+      <div class="proj-num">01</div>
+      <div class="proj-type" data-editable>thesis · mine water management</div>
+      <h3 class="proj-title" data-editable>Study of Pit Sump Capacity Based On Sedimentation Rate at Pit 2 of PT Putra Perkasa Abadi Jobsite PT Bukit Asam</h3>
+      <p class="proj-desc" data-editable>A comprehensive analysis of mine sump capacity design, considering sedimentation rates, hydrological characteristics, and local site conditions.</p>
+      <div class="tags"><span class="tag" data-editable>Sedimentation</span><span class="tag" data-editable>Mine Water Management</span><span class="tag" data-editable>Hydrology</span><button class="tag-add">+ Tag</button></div>
+    </div>
+    <div class="proj-card">
+      <button class="del-btn">✕</button>
+      <div class="proj-num">02</div>
+      <div class="proj-type" data-editable>Capstone Design · Feasibility Study</div>
+      <h3 class="proj-title" data-editable>Mine Feasibility Study – Geotechnical, Hydrology &amp; Hydrogeology</h3>
+      <p class="proj-desc" data-editable>Collaborated within a multidisciplinary team to develop Mining Feasibility Studies, leading site investigations, rock testing, rock classification geotechnical analysis, and hydrogeological modeling.</p>
+      <div class="tags"><span class="tag" data-editable>Geomechanics Analysis</span><span class="tag" data-editable>Groundwater modelling</span><button class="tag-add">+ Tag</button></div>
+    </div>
+    <div class="proj-card">
+      <button class="del-btn">✕</button>
+      <div class="proj-num">03</div>
+      <div class="proj-type" data-editable>Lab projects · rock mechanic lab</div>
+      <h3 class="proj-title" data-editable>Rock Testing For Academic and Industrial Applications</h3>
+      <p class="proj-desc" data-editable>Performed mechanical and physical rock testing, covering uniaxial compressive strength (UCS), indirect tensile strength, physical properties, and direct shear strength.</p>
+      <div class="tags"><span class="tag" data-editable>physical testing</span><span class="tag" data-editable>mechanical Testing</span><span class="tag" data-editable>Rock Analysis</span><button class="tag-add">+ Tag</button></div>
+    </div>
+  </div>
+  <button class="add-btn" id="btn-add-proj">+ Tambah Proyek</button>
+</section>
+
+<section id="skills" class="skills-bg">
+  <div class="sec-watermark">04</div>
+  <p class="sec-lbl" data-editable>04 · competencies</p>
+  <h2 class="sec-ttl" data-editable>Skills</h2>
+  <p class="grp-ttl" data-editable>Technicals</p>
+  <div class="ss-grid" id="comp-grid">
+    <div class="ss-item" data-editable>geomechanics analysis</div>
+    <div class="ss-item" data-editable>rock mechanics</div>
+    <div class="ss-item" data-editable>slope stability</div>
+    <div class="ss-item" data-editable>Rock Mass Class.</div>
+    <div class="ss-item" data-editable>groundwater modelling</div>
+    <div class="ss-item" data-editable>mine water management</div>
+    <div class="ss-item" data-editable>laboratory testing</div>
+    <div class="ss-item" data-editable>technical reports</div>
+    <div class="ss-item" data-editable>mine planning</div>
+    <div class="ss-item" data-editable>mine production</div>
+  </div>
+  <button class="add-btn" id="btn-add-comp">+ Tambah Kompetensi</button>
+  
+  <p class="grp-ttl" style="margin-top:2rem" data-editable>Soft Skills</p>
+  <div class="ss-grid" id="interp-grid">
+    <div class="ss-item" data-editable>strong teamwork</div>
+    <div class="ss-item" data-editable>Problem Solving</div>
+    <div class="ss-item" data-editable>Adaptable</div>
+    <div class="ss-item" data-editable>resilience</div>
+  </div>
+  <button class="add-btn" id="btn-add-interp">+ Tambah Skill</button>
+</section>
+
+<section id="organization">
+  <div class="sec-watermark">05</div>
+  <p class="sec-lbl" data-editable>05 · Academic &amp; Non-Academic Activities</p>
+  <h2 class="sec-ttl" data-editable>Activities &amp; Involvement</h2>
+  <div id="involvement-list">
+
+<div class="comm-card">
+  <button class="del-btn">✕</button>
+  <div>
+    <span class="act-badge akademik">Academic</span>
+    <div class="comm-name" data-editable>Independent Project – Nickel Mine Planning</div>
+    <div class="comm-role" data-editable>Mine Planning Engineer · On-Going</div>
+  </div>
+  <div class="comm-year" data-editable>2026</div>
+</div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge akademik">Academic</span>
+        <div class="comm-name" data-editable>Study of Pit Sump Capacity Based on Sedimentation Rate</div>
+        <div class="comm-role" data-editable>Thesis · UPN "Veteran" Yogyakarta</div>
+      </div>
+      <div class="comm-year" data-editable>2025</div>
+    </div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge akademik">Academic</span>
+        <div class="comm-name" data-editable>Rock Mechanics Laboratory Projects</div>
+        <div class="comm-role" data-editable>Rock Testing & Analysis · UPN "Veteran" Yogyakarta</div>
+      </div>
+      <div class="comm-year" data-editable>2023–2025</div>
+    </div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge akademik">Academic</span>
+        <div class="comm-name" data-editable>Capstone Design Project – Trass Mining Feasibility Study</div>
+        <div class="comm-role" data-editable>Mine Design Project · Academic Project</div>
+      </div>
+      <div class="comm-year" data-editable>2024</div>
+    </div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge non-akademik">Non-Academic</span>
+        <div class="comm-name" data-editable>Pengenalan Kehidupan Kampus Bela Negara Fakultas Teknologi Mineral (PKKBN FTM) 2023</div>
+        <div class="comm-role" data-editable>Logistic Staff · Committee</div>
+      </div>
+      <div class="comm-year" data-editable>2023</div>
+    </div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge non-akademik">Non-Academic</span>
+        <div class="comm-name" data-editable>UPN Mining Competition (UMC) 2023</div>
+        <div class="comm-role" data-editable>Head of Secretariat · Committee</div>
+      </div>
+      <div class="comm-year" data-editable>2023</div>
+    </div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge non-akademik">Non-Academic</span>
+        <div class="comm-name" data-editable>Himpunan Mahasiswa Teknik Pertambangan (HMTA) UPN "Veteran" Yogyakarta</div>
+        <div class="comm-role" data-editable>Secretariat Staff · Organization</div>
+      </div>
+      <div class="comm-year" data-editable>2022–2023</div>
+    </div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge non-akademik">Non-Academic</span>
+        <div class="comm-name" data-editable>Youth Mining Camp Competition (YMCC) 2023</div>
+        <div class="comm-role" data-editable>Logistic Staff · Committee</div>
+      </div>
+      <div class="comm-year" data-editable>2022–2023</div>
+    </div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge non-akademik">Non-Academic</span>
+        <div class="comm-name" data-editable>Dinamika Anak Tambang (Dinamit) 2023</div>
+        <div class="comm-role" data-editable>Logistic Staff · Committee</div>
+      </div>
+      <div class="comm-year" data-editable>2022–2023</div>
+    </div>
+
+    <div class="comm-card">
+      <button class="del-btn">✕</button>
+      <div>
+        <span class="act-badge non-akademik">Non-Academic</span>
+        <div class="comm-name" data-editable>Cakrawala – Reuni Alumni Teknik Pertambangan Angkatan 2005</div>
+        <div class="comm-role" data-editable>Logistic Staff · Committee</div>
+      </div>
+      <div class="comm-year" data-editable>2022</div>
+    </div>
+
+  </div>
+  <button class="add-btn" style="max-width:480px" id="btn-add-inv">+ Tambah Kegiatan</button>
+</section>
+
+<section id="gallery">
+  <div class="sec-watermark">06</div>
+  <p class="sec-lbl" data-editable>06 · Visuals</p>
+  <h2 class="sec-ttl" data-editable>Documentation &amp; Gallery</h2>
+  <div class="gal-grid" id="gal-grid">
+    
+    <div class="gal-item">
+      <button class="del-btn">✕</button>
+      <img class="gal-cover" src="" alt="" style="display:none;">
+      <div class="gal-images"></div>
+      <div class="gal-info">
+        <div class="gal-title" data-editable>Rock Mechanics Lab</div>
+        <div class="gal-desc" data-editable>UPN "Veteran" Yogyakarta</div>
+        <div class="gal-long-desc" data-editable>Conducted physical and mechanical rock testing for academic projects and industrial requirement. Responsible for assisting undergraduate laboratory sessions, evaluated laboratory reports, and ensuring proper demonstrated rock testing according to standardized procedures.</div>
+      </div>
+      <div class="photo-overlay">📷 Ubah Cover</div>
+      <button class="gal-extra-btn">+ Slide Foto</button>
+    </div>
+
+    <div class="gal-item">
+      <button class="del-btn">✕</button>
+      <img class="gal-cover" src="" alt="" style="display:none;">
+      <div class="gal-images"></div>
+      <div class="gal-info">
+        <div class="gal-title" data-editable>Final Project Research</div>
+        <div class="gal-desc" data-editable>PT Putra Perkasa Abadi Jobsite PT Bukit Asam Tbk</div>
+        <div class="gal-long-desc" data-editable>Conducted research at Pit 2 of PT Putra Perkasa Abadi Jobsite Bukit Asam to analyze the relationship between water overflow that occurs at the sump  and sediment accumulation caused by surface runoff. The study involved field measurements, laboratory testings, and hydrological modeling to formulate recommendations for optimal sump capacity.</div>
+      </div>
+      <div class="photo-overlay">📷 Ubah Cover</div>
+      <button class="gal-extra-btn">+ Slide Foto</button>
+    </div>
+
+    <div class="gal-item">
+      <button class="del-btn">✕</button>
+      <img class="gal-cover" src="" alt="" style="display:none;">
+      <div class="gal-images"></div>
+      <div class="gal-info">
+        <div class="gal-title" data-editable>Capstone Design Project (Feasibility Study)</div>
+        <div class="gal-desc" data-editable>Kulon Progo &amp; upn "veteran" yogyakarta</div>
+        <div class="gal-long-desc" data-editable>Developed a comprehensive feasibility study document for a trass mining project as part of a multidisciplinary team, with full responsibility for all geotechnical aspects. Scope of work included field investigation, laboratory testing, rock mass characterization, geotechnical analysis using Rocscience bundle software, and determination of safe slope geometry as pit design recommendations.</div>
+      </div>
+      <div class="photo-overlay">📷 Ubah Cover</div>
+      <button class="gal-extra-btn">+ Slide Foto</button>
+    </div>
+
+  </div>
+  <button class="add-btn" id="btn-add-gal">+ Tambah Dokumentasi</button>
+</section>
+
+<section id="contact" class="contact-bg">
+  <p class="sec-lbl" data-editable>07 · contacts</p>
+  <h2 class="sec-ttl" data-editable>Contacts Information</h2>
+  <div class="contact-inner">
+    <div>
+      <p data-editable style="color:var(--sand);line-height:1.9;margin-bottom:2rem">Open to career opportunities in mining geotechnics, rock mechanics, mine planning, and other entry-level positions within the mining industry.</p>
+    </div>
+    <div>
+      <div class="contact-items" id="contact-list">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=anggitsy5@gmail.com" target="_blank" class="contact-item" style="text-decoration:none;">
+          <button class="del-btn">✕</button>
+          <span class="ci-icon">✉</span>
+          <div><span class="ci-lbl" data-editable>Email</span><span class="ci-val" data-editable>anggitsy5@gmail.com</span></div>
+        </a>
+        <a href="https://wa.me/6285156837487" target="_blank" class="contact-item" style="text-decoration:none;">
+          <button class="del-btn">✕</button>
+          <span class="ci-icon">📲</span>
+          <div><span class="ci-lbl" data-editable>WhatsApp</span><span class="ci-val" data-editable>+62 851 5683 7487</span></div>
+        </a>
+        <a href="https://linkedin.com/in/anggitsumaryanto" target="_blank" class="contact-item" style="text-decoration:none;">
+          <button class="del-btn">✕</button>
+          <span class="ci-icon">🔗</span>
+          <div><span class="ci-lbl" data-editable>LinkedIn</span><span class="ci-val" data-editable>linkedin.com/in/anggitsumaryanto</span></div>
+        </a>
+        <a href="https://www.google.com/maps/place/Indonesia/" target="_blank" class="contact-item" style="text-decoration:none;">
+          <button class="del-btn">✕</button>
+          <span class="ci-icon">📍</span>
+          <div><span class="ci-lbl" data-editable>Location</span><span class="ci-val" data-editable>Indonesia · Yogyakarta · Willing to Relocate</span></div>
+        </a>
+      </div>
+      <button class="add-btn" id="btn-add-contact">+ Tambah Kontak</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 · <span data-editable>Anggit Sumaryanto</span> · Mining Engineer</p>
+</footer>
+
+<div id="lb-overlay">
+  <div id="lb-box">
+    <button class="lb-close" id="lb-close">✕</button>
+    <div id="lb-left">
+      <button class="lb-nav" id="lb-prev">&#10094;</button>
+      <img id="lb-img" src="" alt="">
+      <button class="lb-nav" id="lb-next">&#10095;</button>
+      <div class="lb-counter" id="lb-counter">1 / 1</div>
+    </div>
+    <div id="lb-right">
+      <h3 class="lb-title" id="lb-title"></h3>
+      <div class="lb-subtitle" id="lb-subtitle"></div>
+      <div class="lb-desc" id="lb-desc"></div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-overlay">
+  <div id="modal-box">
+    <button class="modal-x" id="modal-close-x">✕</button>
+    <h3 id="modal-title">Tambah</h3>
+    <div id="modal-fields"></div>
+    <div class="modal-btns">
+      <button class="btn-p" id="modal-ok">Simpan</button>
+      <button class="btn-o" id="modal-cancel">Batal</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var editMode = false;
+  var mCb = null, mFields = [];
+  var targetImg = null;
+  var uploadTargetType = null; // 'profile', 'cover', 'slide'
+  var activeGalItem = null;
+  
+  // Lightbox Variables
+  var lbImages = [];
+  var lbIndex = 0;
+
+  function init() {
+    document.getElementById('btn-edit').addEventListener('click', toggleEdit);
+    document.getElementById('btn-save').addEventListener('click', saveLocal);
+    document.getElementById('btn-load').addEventListener('click', loadLocal);
+    document.getElementById('btn-export').addEventListener('click', doExport);
+    document.getElementById('btn-reset').addEventListener('click', doReset);
+    document.getElementById('btn-add-para').addEventListener('click', addAboutPara);
+    document.getElementById('btn-add-exp').addEventListener('click', addExp);
+    document.getElementById('btn-add-proj').addEventListener('click', addProj);
+    document.getElementById('btn-add-comp').addEventListener('click', function(){ addChip('comp-grid'); });
+    document.getElementById('btn-add-interp').addEventListener('click', function(){ addChip('interp-grid'); });
+    document.getElementById('btn-add-inv').addEventListener('click', addInvolvement);
+    document.getElementById('btn-add-gal').addEventListener('click', addGallery);
+    document.getElementById('btn-add-contact').addEventListener('click', addContact);
+    document.getElementById('modal-ok').addEventListener('click', modalOK);
+    document.getElementById('modal-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-close-x').addEventListener('click', closeModal);
+    document.getElementById('modal-overlay').addEventListener('click', function(e){ if(e.target.id==='modal-overlay') closeModal(); });
+    
+    // Lightbox Listeners
+    document.getElementById('lb-close').addEventListener('click', closeLightbox);
+    document.getElementById('lb-overlay').addEventListener('click', function(e){ if(e.target.id==='lb-overlay') closeLightbox(); });
+    document.getElementById('lb-prev').addEventListener('click', function(e){ e.stopPropagation(); navigateLightbox(-1); });
+    document.getElementById('lb-next').addEventListener('click', function(e){ e.stopPropagation(); navigateLightbox(1); });
+
+    // Universal Click Listener
+    document.addEventListener('click', function(e){
+      // === KONDISI SAAT MODE EDIT MENYALA ===
+      if(editMode) {
+        var overlay = e.target.closest('.photo-overlay');
+        if(overlay) {
+          uploadTargetType = 'cover';
+          targetImg = overlay.parentElement.querySelector('img.gal-cover') || overlay.parentElement.querySelector('#profile-photo');
+          document.getElementById('photo-input').click();
+          return;
+        }
+        var slideBtn = e.target.closest('.gal-extra-btn');
+        if(slideBtn) {
+          uploadTargetType = 'slide';
+          activeGalItem = slideBtn.closest('.gal-item');
+          document.getElementById('photo-input').click();
+          return;
+        }
+      } 
+      // === KONDISI SAAT MODE EDIT MATI (VIEWER) ===
+      else {
+        var galItem = e.target.closest('.gal-item');
+        // Pastikan kita tidak mengklik di dalam Lightbox itu sendiri
+        if(galItem && !e.target.closest('#lb-overlay')) {
+          openLightbox(galItem);
+        }
+      }
+    });
+
+    document.getElementById('photo-input').addEventListener('change', loadPhoto);
+    document.querySelectorAll('.del-btn').forEach(function(b){ b.addEventListener('click', function(){ delCard(this); }); });
+    document.querySelectorAll('.tag-add').forEach(function(b){ b.addEventListener('click', function(){ addTag(this); }); });
+    document.querySelectorAll('[data-editable]').forEach(function(el){ el.contentEditable = 'false'; });
+
+    window.addEventListener('scroll', function(){
+      var cur = '';
+      document.querySelectorAll('section[id]').forEach(function(s){ if(window.scrollY >= s.offsetTop-150) cur = s.id; });
+      document.querySelectorAll('.nav-links a').forEach(function(a){ a.style.color = a.getAttribute('href')==='#'+cur ? 'var(--gold)' : ''; });
+    });
+
+    document.addEventListener('keydown', function(e){
+      if(e.key==='Enter' && !e.shiftKey && document.activeElement && document.activeElement.getAttribute('data-editable')!==null && document.activeElement.tagName!=='TEXTAREA'){
+        e.preventDefault(); document.activeElement.blur();
+      }
+      if(e.key==='Escape') {
+        closeModal();
+        closeLightbox();
+      }
+      if(!editMode && document.getElementById('lb-overlay').classList.contains('open')) {
+        if(e.key==='ArrowLeft') navigateLightbox(-1);
+        if(e.key==='ArrowRight') navigateLightbox(1);
+      }
+    });
+
+    // Terapkan layout gallery yang simetris saat halaman pertama dimuat
+    updateGalGrid();
+  }
+
+  /* --- FUNGSI LIGHTBOX --- */
+  function openLightbox(item) {
+    lbImages = [];
+
+    // Gunakan getAttribute agar tidak salah resolve ke URL halaman saat src=""
+    var cover = item.querySelector('.gal-cover');
+    var coverSrc = cover ? cover.getAttribute('src') : '';
+    if(coverSrc && coverSrc.length > 10) lbImages.push(cover.src);
+
+    var extraSlides = item.querySelectorAll('.gal-images img');
+    extraSlides.forEach(function(img){
+      var s = img.getAttribute('src');
+      if(s && s.length > 10) lbImages.push(img.src);
+    });
+
+    var titleEl    = item.querySelector('.gal-title');
+    var subtitleEl = item.querySelector('.gal-desc');
+    var longDescEl = item.querySelector('.gal-long-desc');
+    var hasText    = (titleEl && titleEl.textContent.trim()) ||
+                     (subtitleEl && subtitleEl.textContent.trim()) ||
+                     (longDescEl && longDescEl.textContent.trim());
+
+    if(lbImages.length === 0 && !hasText) return;
+
+    lbIndex = 0;
+    document.getElementById('lb-title').innerHTML    = titleEl    ? titleEl.innerHTML    : '';
+    document.getElementById('lb-subtitle').innerHTML = subtitleEl ? subtitleEl.innerHTML : '';
+    document.getElementById('lb-desc').innerHTML     = longDescEl ? longDescEl.innerHTML : '';
+
+    var lbImg     = document.getElementById('lb-img');
+    var lbCounter = document.getElementById('lb-counter');
+    var lbPrev    = document.getElementById('lb-prev');
+    var lbNext    = document.getElementById('lb-next');
+    if(lbImages.length === 0) {
+      lbImg.style.display     = 'none';
+      lbCounter.style.display = 'none';
+      lbPrev.style.display    = 'none';
+      lbNext.style.display    = 'none';
+    } else {
+      lbImg.style.display = 'block';
+      updateLightboxView();
+    }
+
+    document.getElementById('lb-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    document.getElementById('lb-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('lb-img').style.display     = 'block';
+    document.getElementById('lb-counter').style.display = '';
+    document.getElementById('lb-prev').style.display    = '';
+    document.getElementById('lb-next').style.display    = '';
+  }
+
+  function navigateLightbox(dir) {
+    lbIndex += dir;
+    if(lbIndex < 0) lbIndex = lbImages.length - 1;
+    if(lbIndex >= lbImages.length) lbIndex = 0;
+    updateLightboxView();
+  }
+
+  function updateLightboxView() {
+    document.getElementById('lb-img').src = lbImages[lbIndex];
+    document.getElementById('lb-counter').textContent = (lbIndex + 1) + ' / ' + lbImages.length;
+    
+    // Sembunyikan panah jika cuma 1 foto
+    var showNav = lbImages.length > 1 ? 'flex' : 'none';
+    document.getElementById('lb-prev').style.display = showNav;
+    document.getElementById('lb-next').style.display = showNav;
+    document.getElementById('lb-counter').style.display = lbImages.length > 1 ? 'block' : 'none';
+  }
+  /* ------------------------- */
+
+  function toggleEdit() {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    var b = document.getElementById('btn-edit');
+    b.classList.toggle('active', editMode);
+    b.textContent = editMode ? '✓ Edit Aktif' : '✏ Mode Edit';
+    document.querySelectorAll('[data-editable]').forEach(function(el){
+      el.contentEditable = editMode ? 'true' : 'false';
+    });
+  }
+
+  function delCard(btn) {
+    if(!editMode) return;
+    if(confirm('Hapus item ini?')){ btn.parentElement.remove(); renum(); updateGalGrid(); }
+  }
+  
+  function renum(){
+    document.querySelectorAll('#proj-grid .proj-num').forEach(function(el,i){ el.textContent = String(i+1).padStart(2,'0'); });
+  }
+
+  function addTag(btn) {
+    var n = prompt('Nama tag:'); if(!n) return;
+    var t = document.createElement('span');
+    t.className = 'tag'; t.setAttribute('data-editable','');
+    t.contentEditable = editMode ? 'true' : 'false';
+    t.textContent = n;
+    btn.parentElement.insertBefore(t, btn);
+  }
+
+  function addChip(gridId) {
+    var n = prompt('Nama:'); if(!n) return;
+    var d = document.createElement('div');
+    d.className = 'ss-item'; d.setAttribute('data-editable','');
+    d.contentEditable = editMode ? 'true' : 'false';
+    d.textContent = n;
+    document.getElementById(gridId).appendChild(d);
+  }
+
+  function addAboutPara() {
+    var p = document.createElement('p');
+    p.setAttribute('data-editable',''); p.contentEditable = editMode ? 'true' : 'false';
+    p.textContent = 'Tulis paragraf baru di sini...';
+    var btn = document.getElementById('btn-add-para');
+    document.getElementById('about-text').insertBefore(p, btn);
+    if(editMode){ p.focus(); var r=document.createRange(); r.selectNodeContents(p); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+  }
+
+  function addExp() {
+    openModal('Tambah Pengalaman', [
+      {id:'dt', label:'Tahun', ph:'20XX – 20XX'},
+      {id:'rl', label:'Jabatan / Peran', ph:'Asisten Penelitian'},
+      {id:'og', label:'Institusi', ph:'Universitas ...'},
+      {id:'dc', label:'Deskripsi', ph:'Uraian pekerjaan...', type:'textarea'}
+    ], function(d){
+      var div = document.createElement('div');
+      div.className = 'exp-item';
+      div.innerHTML =
+        '<button class="del-btn">✕</button>'+
+        '<div class="exp-date" data-editable>'+d.dt+'</div>'+
+        '<h3 class="exp-role" data-editable>'+d.rl+'</h3>'+
+        '<p class="exp-org" data-editable>'+d.og+'</p>'+
+        '<p class="exp-desc" data-editable>'+d.dc+'</p>'+
+        '<div class="tags"><button class="tag-add">+ Tag</button></div>';
+      document.getElementById('exp-list').appendChild(div);
+      div.querySelector('.del-btn').addEventListener('click', function(){ delCard(this); });
+      div.querySelector('.tag-add').addEventListener('click', function(){ addTag(this); });
+      div.querySelectorAll('[data-editable]').forEach(function(el){ el.contentEditable = editMode?'true':'false'; });
+    });
+  }
+
+  function addProj() {
+    openModal('Tambah Proyek', [
+      {id:'pt', label:'Tipe', ph:'Skripsi · Geoteknik'},
+      {id:'ti', label:'Judul', ph:'Judul proyek lengkap'},
+      {id:'dc', label:'Deskripsi', ph:'Deskripsi singkat...', type:'textarea'}
+    ], function(d){
+      var n = document.querySelectorAll('#proj-grid .proj-card').length + 1;
+      var div = document.createElement('div');
+      div.className = 'proj-card';
+      div.innerHTML =
+        '<button class="del-btn">✕</button>'+
+        '<div class="proj-num">'+String(n).padStart(2,'0')+'</div>'+
+        '<div class="proj-type" data-editable>'+d.pt+'</div>'+
+        '<h3 class="proj-title" data-editable>'+d.ti+'</h3>'+
+        '<p class="proj-desc" data-editable>'+d.dc+'</p>'+
+        '<div class="tags"><button class="tag-add">+ Tag</button></div>';
+      document.getElementById('proj-grid').appendChild(div);
+      div.querySelector('.del-btn').addEventListener('click', function(){ delCard(this); });
+      div.querySelector('.tag-add').addEventListener('click', function(){ addTag(this); });
+      div.querySelectorAll('[data-editable]').forEach(function(el){ el.contentEditable = editMode?'true':'false'; });
+    });
+  }
+
+  function addInvolvement() {
+    openModal('Tambah Keterlibatan', [
+      {id:'nm', label:'Nama Kegiatan / Organisasi', ph:'YMCC 2024'},
+      {id:'rl', label:'Peran & Jenis', ph:'Staf Bidang Logistik · Kepanitiaan'},
+      {id:'yr', label:'Tahun', ph:'2024'}
+    ], function(d){
+      var div = document.createElement('div');
+      div.className = 'comm-card';
+      div.innerHTML =
+        '<button class="del-btn">✕</button>'+
+        '<div><div class="comm-name" data-editable>'+d.nm+'</div><div class="comm-role" data-editable>'+d.rl+'</div></div>'+
+        '<div class="comm-year" data-editable>'+d.yr+'</div>';
+      document.getElementById('involvement-list').appendChild(div);
+      div.querySelector('.del-btn').addEventListener('click', function(){ delCard(this); });
+      div.querySelectorAll('[data-editable]').forEach(function(el){ el.contentEditable = editMode?'true':'false'; });
+    });
+  }
+
+  function updateGalGrid() {
+    var grid = document.getElementById('gal-grid');
+    if(!grid) return;
+    var items = Array.from(grid.querySelectorAll('.gal-item'));
+    var n = items.length;
+
+    // Reset semua span
+    items.forEach(function(item){ item.style.gridColumn = ''; });
+
+    if(n <= 0) return;
+
+    if(n === 1) {
+      // 1 item: penuh
+      grid.style.gridTemplateColumns = '1fr';
+    } else if(n === 2) {
+      // 2 item: 2 kolom besar
+      grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+    } else if(n === 3) {
+      // 3 item: 3 kolom sejajar
+      grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    } else if(n === 4) {
+      // 4 item: 2x2 (lebih besar dari 3 kolom)
+      grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+    } else if(n === 5) {
+      // 5 item: 2 besar di atas, 3 kecil di bawah
+      // Gunakan 6 kolom virtual: item 1-2 span 3, item 3-5 span 2
+      grid.style.gridTemplateColumns = 'repeat(6, 1fr)';
+      items.forEach(function(item, i){
+        item.style.gridColumn = i < 2 ? 'span 3' : 'span 2';
+      });
+    } else if(n === 6) {
+      // 6 item: 3x2 simetris
+      grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    } else {
+      // 7+: selalu 3 kolom, baris terakhir disesuaikan
+      grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+      var rem = n % 3;
+      if(rem === 1) {
+        // 1 item di baris terakhir: tengah
+        items[n-1].style.gridColumn = '2';
+      } else if(rem === 2) {
+        // 2 item di baris terakhir: rata tengah dengan 6-col virtual
+        grid.style.gridTemplateColumns = 'repeat(6, 1fr)';
+        items.forEach(function(item, i){
+          var rowStart = n - 2; // index awal baris terakhir
+          if(i < rowStart) {
+            item.style.gridColumn = 'span 2';
+          } else {
+            item.style.gridColumn = 'span 3';
+          }
+        });
+      }
+    }
+  }
+
+  function addGallery() {
+    openModal('Tambah Dokumentasi', [
+      {id:'tl', label:'Judul Singkat', ph:'Lab Work'},
+      {id:'ds', label:'Keterangan', ph:'Lokasi / Acara'}
+    ], function(d){
+      var div = document.createElement('div');
+      div.className = 'gal-item';
+      div.innerHTML =
+        '<button class="del-btn">✕</button>'+
+        '<img class="gal-cover" src="" alt="" style="display:none;">'+
+        '<div class="gal-images"></div>'+
+        '<div class="gal-info">'+
+          '<div class="gal-title" data-editable>'+d.tl+'</div>'+
+          '<div class="gal-desc" data-editable>'+d.ds+'</div>'+
+          '<div class="gal-long-desc" data-editable>Tulis deskripsi detail di sini...</div>'+
+        '</div>'+
+        '<div class="photo-overlay">📷 Ubah Cover</div>'+
+        '<button class="gal-extra-btn">+ Slide Foto</button>';
+      document.getElementById('gal-grid').appendChild(div);
+      div.querySelector('.del-btn').addEventListener('click', function(){ delCard(this); });
+      div.querySelectorAll('[data-editable]').forEach(function(el){ el.contentEditable = editMode?'true':'false'; });
+      updateGalGrid();
+    });
+  }
+
+  function addContact() {
+    openModal('Tambah Kontak', [
+      {id:'ic', label:'Ikon (emoji)', ph:'🌐'},
+      {id:'lb', label:'Label', ph:'Website'},
+      {id:'vl', label:'Nilai', ph:'www.namaanda.com'}
+    ], function(d){
+      var div = document.createElement('div');
+      div.className = 'contact-item';
+      div.innerHTML =
+        '<button class="del-btn">✕</button>'+
+        '<span class="ci-icon">'+d.ic+'</span>'+
+        '<div><span class="ci-lbl" data-editable>'+d.lb+'</span><span class="ci-val" data-editable>'+d.vl+'</span></div>';
+      document.getElementById('contact-list').appendChild(div);
+      div.querySelector('.del-btn').addEventListener('click', function(){ delCard(this); });
+      div.querySelectorAll('[data-editable]').forEach(function(el){ el.contentEditable = editMode?'true':'false'; });
+    });
+  }
+  
+  function loadPhoto(e) {
+    var file = e.target.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      
+      if(uploadTargetType === 'slide' && activeGalItem) {
+        // Mode tambah slide ke dalam kotak galeri
+        var img = document.createElement('img');
+        img.src = ev.target.result;
+        var container = activeGalItem.querySelector('.gal-images');
+        container.appendChild(img);
+        toast('✓ Slide foto berhasil ditambah!');
+      } 
+      else if(targetImg) {
+        // Mode ubah gambar cover atau profil
+        targetImg.src = ev.target.result; 
+        targetImg.style.display = 'block';
+        
+        if(targetImg.id === 'profile-photo'){
+          var pIcon = document.getElementById('p-icon');
+          var pHint = document.getElementById('p-hint');
+          if(pIcon) pIcon.style.display = 'none';
+          if(pHint) pHint.style.display = 'none';
+        }
+      }
+      
+      document.getElementById('photo-input').value = ''; 
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function openModal(title, fields, cb) {
+    mCb = cb; mFields = fields;
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-fields').innerHTML = fields.map(function(f){
+      return '<div class="mf"><label>'+f.label+'</label>'+
+        (f.type==='textarea'
+          ? '<textarea id="mf-'+f.id+'" placeholder="'+f.ph+'"></textarea>'
+          : '<input type="'+(f.type||'text')+'" id="mf-'+f.id+'" placeholder="'+f.ph+'">')+
+        '</div>';
+    }).join('');
+    document.getElementById('modal-overlay').classList.add('open');
+    setTimeout(function(){ var el=document.querySelector('#modal-fields input, #modal-fields textarea'); if(el) el.focus(); }, 80);
+  }
+  
+  function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); mCb = null; }
+  
+  function modalOK() {
+    if(!mCb) return;
+    var data = {};
+    mFields.forEach(function(f){ data[f.id] = (document.getElementById('mf-'+f.id)||{}).value || ''; });
+    mCb(data); closeModal();
+  }
+
+  function saveLocal() { localStorage.setItem('pf_save', document.documentElement.outerHTML); toast('✓ Tersimpan di browser!'); }
+  function loadLocal() {
+    var s = localStorage.getItem('pf_save');
+    if(!s){ alert('Belum ada data tersimpan.'); return; }
+    if(confirm('Muat data tersimpan? Perubahan saat ini hilang.')){ document.open(); document.write(s); document.close(); }
+  }
+  function doReset() { if(confirm('Reset semua ke template awal?')){ localStorage.removeItem('pf_save'); location.reload(); } }
+
+  function doExport() {
+    var wasEdit = editMode;
+    if(wasEdit) toggleEdit();
+    var clone = document.documentElement.cloneNode(true);
+    // Hapus fitur editor namun biarkan struktur lightbox tetap ada
+    var rm = ['#toolbar','#modal-overlay','#photo-input'];
+    rm.forEach(function(sel){ var el=clone.querySelector(sel); if(el) el.remove(); });
+    var nav = clone.querySelector('nav'); if(nav) nav.style.top='0';
+    var hero = clone.querySelector('.hero'); if(hero) hero.style.paddingTop='80px';
+    // Membersihkan tombol hapus/tambah agar tidak bocor ke hasil ekspor
+    clone.querySelectorAll('.del-btn,.add-btn,.tag-add,.gal-extra-btn').forEach(function(el){ el.remove(); });
+    clone.querySelectorAll('[data-editable]').forEach(function(el){ el.removeAttribute('data-editable'); el.removeAttribute('contenteditable'); });
+    var blob = new Blob(['<!DOCTYPE html>'+clone.outerHTML],{type:'text/html'});
+    var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='portfolio.html'; a.click();
+    if(wasEdit) toggleEdit();
+    toast('⬇ File diunduh!');
+  }
+
+  function toast(msg) {
+    var t = document.createElement('div');
+    t.textContent = msg;
+    Object.assign(t.style,{position:'fixed',bottom:'2rem',right:'2rem',background:'var(--amber)',color:'var(--coal)',fontFamily:"'DM Mono',monospace",fontSize:'0.7rem',letterSpacing:'0.1em',padding:'0.75rem 1.5rem',zIndex:'999999',transition:'opacity 0.5s'});
+    document.body.appendChild(t);
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },500); },2000);
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+</body>
+</html>
